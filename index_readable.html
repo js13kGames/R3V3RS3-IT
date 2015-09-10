@@ -1,0 +1,2008 @@
+<html>
+<head>
+	<style>
+		/* use the full browser window and hide anything that doesn't fit inside it */
+		body
+		{
+			margin: 0;
+			overflow: hidden;
+		}
+
+		/* this is the class used for the title, with the fancy animated stroke effect - google 'css ants' for an explanation */
+		.a
+		{
+			fill: #09d;
+			stroke: white;
+			stroke-dasharray: 7% 28%;
+			stroke-width: 3px;
+			animation: c 9s infinite ease-in;
+		}
+		.a:nth-child(1) {
+			stroke: #ff9800;
+			stroke-dashoffset: 7%;
+		}
+		.a:nth-child(2) {
+			stroke: #ff0;
+			stroke-dashoffset: 14%;
+		}
+		.a:nth-child(3) {
+			stroke: #8f8;
+			stroke-dashoffset: 21%;
+		}
+		.a:nth-child(4) {
+			stroke: #fff;
+			stroke-dashoffset: 28%;
+		}
+		.a:nth-child(5) {
+			stroke: transparent;
+			stroke-dashoffset: 35%;
+		}
+
+		/* font used by the title */
+		.d
+		{
+			font: 6vw Arial;
+			font-weight: bolder;
+		}
+
+		/* stroke animation keyframes */
+		@keyframes c {
+			50% {
+				stroke-dashoffset: 35%;
+				stroke-dasharray: 0 87.5%;
+			}
+		}
+
+		/* text with fading white shadow used for feedback messages (ok, well done, and so on) */
+		.b{
+			letter-spacing: -7px;
+			font-weight:700;
+			animation:e 1s ease-out;
+			opacity: 0;
+			position: absolute;
+			left: 0;
+			width: 90%;
+			text-shadow:0 0 5px #fff,
+			0 0 7px #fff;
+			text-align:right;
+			color:#fff;
+			top: 20%;
+			font-size: 6em;
+		}
+
+		/* text with fading black shadow used for the 'time bonus' message */
+		.l{
+			letter-spacing: -7px;
+			font-weight:700;
+			animation:e 1s ease-out;
+			opacity: 0;
+			position: absolute;
+			left: 0;
+			text-shadow:0 0 5px #000,
+			0 0 7px #000;
+			text-align:left;
+			color:#000;
+			bottom: 20%;
+			font-size: 4vw;
+		}
+
+		/* fading text shadow for large text */
+		@keyframes e{
+			from{
+				opacity: 1;
+				text-shadow:0 0 10px #fff,
+				0 0 10px #fff,
+				0 0 25px #fff,
+				0 0 25px #fff,
+				0 0 25px #fff,
+				0 0 25px #fff,
+				0 0 25px #fff,
+				0 0 25px #fff,
+				0 0 50px #fff,
+				0 0 50px #fff,
+				0 0 50px #7B96B8,
+				0 0 150px #7B96B8,
+				0 10px 100px #7B96B8,
+				0 10px 100px #7B96B8,
+				0 10px 100px #7B96B8,
+				0 10px 100px #7B96B8,
+				0 -10px 100px #7B96B8,
+				0 -10px 100px #7B96B8;}
+		}
+
+		/* fading text shadow for tiny text */
+		@keyframes f{
+			from{
+				opacity: 1;
+				text-shadow:0 0 2px #fff,
+				0 0 2px #fff,
+				0 0 5px #fff,
+				0 0 5px #fff,
+				0 0 5px #fff,
+				0 0 5px #fff,
+				0 0 5px #fff,
+				0 0 5px #fff,
+				0 0 10px #fff,
+				0 0 10px #fff,
+				0 0 10px rgba(255,255,255,0.75),
+				0 0 30px rgba(255,255,255,0.75),
+				0 2px 20px rgba(255,255,255,0.75),
+				0 2px 20px rgba(255,255,255,0.75),
+				0 2px 20px rgba(255,255,255,0.75),
+				0 2px 20px rgba(255,255,255,0.75),
+				0 -2px 20px rgba(255,255,255,0.75),
+				0 -2px 20px rgba(255,255,255,0.75);}
+		}
+
+		/* simplified 3d text effect for small screens (see media query below for the full thing) */
+		.g {
+			color: #fff;
+			font: 3vw Helvetica;
+			letter-spacing: .2em;
+			font-weight: bold;
+			text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9;
+		}
+
+		/* class for text with pulsating white shadow (used in 'loading' text and text inside buttons) */
+		.h {
+			font: 4vw "Avant Garde", Avantgarde, "Century Gothic", CenturyGothic, "AppleGothic", sans-serif;
+			font-weight: bolder;
+			text-rendering: optimizeLegibility;
+			color: #ff9800;
+			letter-spacing: .15em;
+			animation: f 1s linear alternate infinite;
+		}
+
+		/* class used for buttons */
+		.i
+		{
+			border-radius: 4vw;
+			box-shadow: 0 0 1vw white;
+			padding: 2vw;
+			margin: auto;
+			cursor: pointer;
+			text-align: center;
+			left:0;
+			right: 0;
+			position: absolute;
+			width: 20%;
+			bottom: 2%;
+		}
+
+		/* the dots representing colors when it says 'remember this sequence' */
+		.j
+		{
+			width: 5vw;
+			height: 5vw;
+			border-radius: 2.5vw;
+			margin: 5% 0.5%;
+			margin-top: 100%;
+			display: inline-block;
+			vertical-align: top;
+			box-shadow: 0 0 2vw #000;
+			transition: margin-top 1s, width 1s, height 1s;
+		}
+
+		/* dummy class to make reflowing less expensive when restarting css animations */
+		.k
+		{
+			display: none;
+			position: absolute;
+		}
+
+		/* what happens when the window is big enough */
+		@media (min-width: 800px)
+		{
+			/* title can be bigger and proportional to the width of the screen */
+			.d
+			{
+				font-size: 2vw;
+			}
+
+			/* cool 3d text effect made with shadows */
+			.g
+			{
+				text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);
+			}
+
+			/* move the title a bit higher up */
+			#w
+			{
+				top: -100px;
+			}
+		}
+	</style>
+</head>
+
+<!-- when the page loads, wait half a second to be sure some stuff is displayed on the screen, then execute a function to actually load the game -->
+<body onload="setTimeout(f,500)" onresize="s()">
+
+<!-- this is our webgl canvas !-->
+<canvas id="c"></canvas>
+
+<!-- level menu -->
+<div id="0" style="background:#0bf; margin:0; width:100%; height:100%; transition: opacity 1s; position: absolute; top: 0; overflow: hidden; display: none"> <!-- level menu -->
+	<div id='v' class='g' style="width:100%; margin-top: 1%; text-align: center;">
+		LEVEL <span id="!"></span><br/><br/>remember this sequence:<br/>
+	</div>
+	<div id="1" class="i" style="display: none">
+		<div class="h">OK</div>
+	</div>
+</div>
+
+<!-- game over menu -->
+<div id="5" style="background:#0bf; margin:0; width:100%; height:100%; transition: opacity 1s; position: absolute; top: 0; display: none">
+	<div id='r' class='g' style="width:100%; margin-top: 1%; text-align: center;">
+		GAME OVER<br/><br/>score: <span id="p"></span><br/><span id="o"></span>
+	</div>
+	<div id='q' class="h" style="text-align:center">BEST SCORE</div>
+	<div id='6' class="i">
+		<div class="h">Retry</div>
+	</div>
+</div>
+
+<!-- loading screen -->
+<div id="$" style="background:#0bf; margin:0; width:100%; height:100%; transition: opacity 1s; position: absolute; top: 0">
+	<div id='s' class='h' style='position: absolute; bottom: 10%; left: 10%'>
+		Loading
+	</div>
+
+	<div id="2" style="position:absolute; top: 20%; width: 100%">
+		<svg id="w" viewBox="0 0 400 60" style="position: relative; width: 100%; top: 0">
+			<symbol id="y">
+				<text x="10%" y="35" class="d" id=":">
+					R3V3RS3 IT!
+				</text>
+			</symbol>
+
+			<g id="3">
+				<use xlink:href="#y" class="a"></use>
+				<use xlink:href="#y" class="a"></use>
+				<use xlink:href="#y" class="a"></use>
+				<use xlink:href="#y" class="a"></use>
+				<use xlink:href="#y" class="a"></use>
+			</g>
+		</svg>
+		<div id='t' class='g' style="position: relative; text-align: right; margin-left: 30%">
+			a web game in 10kb by GIO
+		</div>
+
+	</div>
+</div>
+
+<!-- in-game UI -->
+<div id="_" style="position: absolute; width: 100%; height: 100%; top: 0; display: none">
+	<svg viewBox="0 0 400 20" version="1.1" style="width: 100%">
+		<radialGradient id="g0">
+			<stop offset="0%" stop-color="#000" />
+			<stop offset="100%" stop-color="#002" />
+		</radialGradient>
+		<radialGradient id="g1">
+			<stop offset="0%" stop-color="#224" />
+			<stop offset="50%" stop-color="#aaf" />
+			<stop offset="100%" stop-color="#224" />
+		</radialGradient>
+		<linearGradient id="g3">
+			<stop offset="0%" stop-color="#224" />
+			<stop offset="100%" stop-color="#aaf" />
+		</linearGradient>
+		<linearGradient id="g4">
+			<stop offset="0%" stop-color="#aaf" />
+			<stop offset="100%" stop-color="#224" />
+		</linearGradient>
+		<path d="M 200 20 Q 300 0 400 10 L 400 -2 L 200 -2 Z" stroke="url(#g1)" fill="url(#g3)" stroke-width="0.5"/>
+		<path d="M 200 20 Q 100 0 0 10 L 0 -2 L 200 -2 Z" stroke="url(#g1)" fill="url(#g4)" stroke-width="0.5"/>
+		<circle cx="200" cy="10" r="9" stroke="url(#g1)" fill="url(#g0)" stroke-width="2"/>
+	</svg>
+	<svg viewBox="0 0 400 20" version="1.1" style="width: 100%; position:absolute; bottom: 0; left: 0">
+		<radialGradient id="g0">
+			<stop offset="0%" stop-color="#000" />
+			<stop offset="100%" stop-color="#002" />
+		</radialGradient>
+		<radialGradient id="g1">
+			<stop offset="0%" stop-color="#224" />
+			<stop offset="50%" stop-color="#aaf" />
+			<stop offset="100%" stop-color="#224" />
+		</radialGradient>
+		<linearGradient id="g3">
+			<stop offset="0%" stop-color="#224" />
+			<stop offset="100%" stop-color="#aaf" />
+		</linearGradient>
+		<linearGradient id="g4">
+			<stop offset="0%" stop-color="#aaf" />
+			<stop offset="100%" stop-color="#224" />
+		</linearGradient>
+		<path d="M 200 0 Q 300 20 400 10 L 400 22 L 200 22 Z" stroke="url(#g1)" fill="url(#g3)" stroke-width="0.5"/>
+		<path d="M 200 0 Q 100 20 0 10 L 0 22 L 200 22 Z" stroke="url(#g1)" fill="url(#g4)" stroke-width="0.5"/>
+		<ellipse cx="200" cy="10" rx="27" ry="9" stroke="url(#g1)" fill="url(#g0)" stroke-width="2"/>
+	</svg>
+	<svg id="9" viewBox="0 0 400 20" version="1.1" style="width: 100%; position:absolute; bottom: 0; left: 0; transition: opacity 0.3s; opacity: 0">
+		<radialGradient id="g5">
+			<stop offset="0%" stop-color="#0ff" />
+			<stop offset="100%" stop-color="#8ff" />
+		</radialGradient>
+		<ellipse cx="200" cy="10" rx="27" ry="9" stroke="transparent" fill="url(#g5)" stroke-width="2"/>
+	</svg>
+	<div id="." style="font: 2.5vw 'Lucida Console', Monaco, monospace; color: white; text-align:center; position:absolute; top: 1.45vw; width: 100%"></div>
+	<div id="," style="font: 2.5vw 'Lucida Console', Monaco, monospace; color: #006687; text-align:center; position:absolute; bottom: 1.2vw; width: 100%; text-shadow: 0 0 0.2vw black"></div>
+</div>
+
+<!-- feedback message -->
+<div id="%" class="b"></div>
+
+<!-- time bonus message -->
+<div id="+" class="l"></div>
+
+<!-- all our webgl shaders -->
+<div style="display:none">
+<div id="a"> <!-- terrain vertex shader -->
+attribute vec4 v;
+attribute vec3 n;
+uniform mat4 w2s, w2c;
+
+varying vec4 normal, screenPosition;
+varying vec3 uv, position, viewDir;
+
+void main(void)
+{
+	gl_Position = screenPosition = w2s * vec4(v.xyz, 1.);
+    normal = vec4(n, v.y);
+	position = v.xyz;
+	viewDir = (w2c * vec4(-v.xyz, 1.)).xyz;
+	uv = vec3(fract(v.w) * 1.001, floor(v.w) / 10000., w2c[1].y);
+}
+</div>
+
+<div id="b"> <!-- terrain pixel shader -->
+#extension GL_OES_standard_derivatives : enable
+
+precision mediump float;
+varying vec4 normal, screenPosition;
+varying vec3 uv, position, viewDir;
+uniform sampler2D s0, s1, s2, s3, s4;
+uniform vec4 uniformData;
+
+void main(void)
+{
+	vec3 ambient = vec3(0.1, 0.05, 0.);
+	vec3 lightDir = vec3(0.41, -0.82, 0.41);
+    vec3 t0 = texture2D(s0, uv.xy * 37.).xyz;
+    vec3 t1 = texture2D(s1, uv.xy * 49.).xyz;
+    vec3 t2 = texture2D(s2, uv.xy * 51.).xyz;
+	vec4 noise = texture2D(s3, uv.xy * 40.);
+	vec2 tc = fract(uv.xy * 0.5 + uniformData.y / 1000.);
+	vec4 clouds = texture2D(s3, tc) * smoothstep(0.,0.03,tc.x) * smoothstep(0.,0.03,1.-tc.x) * smoothstep(0.,0.03,tc.y) * smoothstep(0.,0.03,1.-tc.y);
+	float i = pow(normal.y, 8.);
+	vec3 texCol = mix(t2, t1, i);
+	float m = clamp((normal.w - 3. - noise.x) / 3., 0., 1.);
+    texCol = mix(t0, texCol, m) * (1. - clouds.x / 2.) ;
+	vec3 n = normal.xyz;
+
+	~
+
+	highp float ndotl= max(0., -dot(lightDir, n));
+	vec3 halfDir = normalize(-lightDir + normalize(viewDir));
+	float specular = max(0., pow(dot(halfDir, n), 4.) * (1. - i * 0.9) * (1. - m * 0.9));
+	vec3 outColor = ndotl * texCol + ambient + specular * length(texCol.xyz) * vec3(0.9, 0.8, 0.6);
+    gl_FragColor = vec4(outColor, 1.);
+}
+</div>
+
+<div id="e"> <!-- sky vertex shader -->
+attribute vec4 v;
+uniform mat4 w2s, w2c;
+uniform vec4 uniformData;
+
+varying vec4 uvt;
+
+void main(void)
+{
+	gl_Position = vec4(v.xy, 0.999, 1.);
+	float angle = atan(w2c[2].z, w2c[2].x) / 6.282 + 0.5;
+	uvt = vec4(fract(v.w) * uniformData.x / 8. - angle, floor(v.w) / 80000., uniformData.y, angle);
+}
+</div>
+
+<div id="f"> <!-- sky pixel shader -->
+precision mediump float;
+varying vec4 uvt;
+
+uniform sampler2D s0;
+
+void main(void)
+{
+	float sunFactor = pow(sin(uvt.w * 3.14), 5.);
+	vec3 skyColor = mix(vec3(0.5,0.5,1.), vec3(1.,0.8,0.5), clamp(uvt.y*10., 0., 1.)) + sunFactor * vec3(0.8,0.3,0.1);
+	vec2 tc = fract(vec2(uvt.x + uvt.z * 0.001, uvt.y));
+	vec4 texCol = texture2D(s0, tc);
+	vec3 cloudColor = mix(pow(texCol.xxx, vec3(0.25)), vec3(0.9,0.8,0.6), sunFactor) * (1. - pow(texCol.z, 4.));
+	vec4 col0 = vec4(cloudColor, clamp(texCol.x,0.,1.) * smoothstep(0.,0.03,tc.x) * smoothstep(0.,0.03,1.-tc.x));
+	tc = fract(vec2(uvt.x + uvt.z * 0.00021 + 0.5, uvt.y));
+	texCol = texture2D(s0, tc);
+	cloudColor = mix(pow(texCol.yyy, vec3(0.66,0.66,0.66)), vec3(1.,0.5,0.5), sunFactor) * (1. - pow(texCol.z, 4.));
+	vec4 col1 = vec4(cloudColor, clamp(2. * texCol.y - 1.,0.,1.) * smoothstep(0.,0.03,tc.x) * smoothstep(0.,0.03,1.-tc.x));
+	gl_FragColor = vec4((skyColor * (1. - col0.w) + col0.xyz * col0.w) * (1. - col1.w) + col1.xyz * col1.w,1.);
+}
+</div>
+
+<div id="g"> <!-- water pixel shader -->
+precision mediump float;
+varying vec4 normal, screenPosition;
+varying vec3 uv;
+
+uniform vec4 uniformData;
+uniform sampler2D s0, s1, s2, s3;
+
+@
+
+void main(void)
+{
+	float height = texture2D(s1, fract(clamp(uv.xy * 3., 1.001, 1.999) * vec2(1., -1.))).x * 15.;
+	vec4 texColor = texture2D(s0, uv.xy * 54. + sin(uniformData.y * 0.1) / 25. + sin(uniformData.yy * 0.1 +  uv.xy * 100.) / 10.);
+	texColor.w = height > 1.? 0. : pow(clamp((1. - height) * 5., 0., 1.), 1.7);
+    vec2 c = (screenPosition.xy * 0.5 / screenPosition.w + 0.5);
+    c.y = 1. - c.y;
+    vec2 dist;
+    dist.x = sin(uv.x * 1000. + sin(uniformData.y * 0.4) + height * 20.);
+    dist.y = sin(uv.y * 868. + cos(uniformData.y * 0.7) + height * 20.);
+    float fade = 1. - pow(screenPosition.z * 0.5 / screenPosition.w + 0.5, 50.);
+    dist *= fade;
+    c += dist * 0.01;
+    vec4 reflection = texture2D(s2, c);
+    texColor = mix(texColor, reflection, texColor.w * clamp(uv.z, 0., 1.) * 0.8 * clamp(1. - (uniformData.z - 2.5) / 12., 0., 1.));
+    vec4 z = texture2D(s3, uv.xy * 100. + sin(uniformData.yy * 0.3 + dist.yx * 0.2) * 0.1);
+	float threshold = 0.3 + z.x * z.y;
+	float specular = smoothstep(threshold - 0.1, threshold + 0.1, pow(nestedNoise(uv.xy * 600., uniformData.y / 5.), 5.)) * pow(fade, 0.3) * texColor.w * 0.5;
+	texColor.rgb += specular;
+    gl_FragColor = texColor;
+}
+</div>
+
+
+<div id="h"> <!-- post process vertex shader -->
+attribute vec4 v;
+varying vec2 uv;
+
+void main(void)
+{
+	uv = vec2(fract(v.w) * 1.001, floor(v.w) / 10000.);
+	gl_Position = vec4(v.xyz, 1.);
+}
+</div>
+
+<div id="i"> <!-- post process pixel shader -->
+precision mediump float;
+varying vec2 uv;
+
+uniform sampler2D s0;
+uniform vec4 uniformData, tintColor;
+
+void main(void)
+{
+	vec2 t = uv * 2. - 1.;
+	float d = abs(sin(length(t) * 6.28 - uniformData.y));
+	float m = min(tintColor.r, min(tintColor.g, tintColor.b));
+	float s = clamp(d + m, 0., 1.);
+	vec3 c = texture2D(s0, uv + (1. - tintColor.w) * (1. - s) * sin(t) / 4.).xyz;
+	vec3 effect = mix(c, tintColor.xyz, (1. - s) * 0.5);
+	vec3 tint = mix(dot(c, vec3(0.299, 0.587, 0.114)) * tintColor.xyz, c,  pow(m, 4.));
+	gl_FragColor = vec4(mix(effect, tint, tintColor.w), 1.);
+}
+</div>
+
+<div id="j"> <!-- marker vertex shader -->
+attribute vec4 v;
+attribute vec3 n;
+
+uniform mat4 w2c, c2s;
+uniform vec4 uniformData;
+uniform vec4 positions[16];
+
+varying vec3 uv;
+varying vec4 color;
+
+void main(void)
+{
+	uv = vec3(vec2(fract(v.w) * 1.001, floor(v.w) / 10000.) * 2. - 1., uniformData.y / 4.);
+	vec4 pos = positions[int(v.x)];
+	color = vec4(n.xyz, pos.w);
+	gl_Position = c2s * (w2c * vec4(pos.xyz, 1.) + vec4(uv.xy * (3. + abs(sin(uv.z))), 0., 0.));
+}
+</div>
+
+<div id="k"> <!-- marker pixel shader -->
+precision mediump float;
+uniform sampler2D s0;
+varying vec3 uv;
+varying vec4 color;
+
+@
+
+void main(void)
+{
+	vec3 c = color.xyz + nestedNoise(uv.xy + uv.z, uv.z) * mix(color.zxy, vec3(1), abs(sin(uv.z)));
+	gl_FragColor = vec4(c, clamp(1. - pow(length(uv.xy), 2.), 0., 1.) * color.w);
+}
+</div>
+
+<div id="l"> <!--ui clouds vertex shader-->
+attribute vec4 v;
+uniform mat4 w2s, w2c;
+uniform vec4 uniformData;
+
+varying vec3 uv;
+
+void main(void)
+{
+	gl_Position = vec4(v.xy, -0.999, 1.);
+	uv = vec3(v.xy / 2. + 0.5, uniformData.y / 10.);
+}
+</div>
+
+<div id="m">     <!-- cool fade out effect-->
+precision mediump float;
+varying vec3 uv;
+uniform vec4 tintColor;
+
+@
+
+void main(void)
+{
+	float n = sin(3.14 * nestedNoise(uv.xy * 8., uv.z));
+	vec3 c = vec3(0.69,0.94,1.);
+	gl_FragColor = vec4(c, n * tintColor.w + pow(tintColor.w, 8.));
+}
+</div>
+
+<div id="x"> // GPU-based noise function
+float noise(vec2 p)
+{
+	return fract(sin(p.x + p.y*100.) * 100.);
+}
+
+vec2 sw(vec2 p) {return vec2( floor(p.x) , floor(p.y) );}
+vec2 se(vec2 p) {return vec2( ceil(p.x)  , floor(p.y) );}
+vec2 nw(vec2 p) {return vec2( floor(p.x) , ceil(p.y)  );}
+vec2 ne(vec2 p) {return vec2( ceil(p.x)  , ceil(p.y)  );}
+
+float smoothNoise(vec2 p)
+{
+	vec2 inter = smoothstep(0., 1., fract(p));
+	float s = mix(noise(sw(p)), noise(se(p)), inter.x);
+	float n = mix(noise(nw(p)), noise(ne(p)), inter.x);
+	return mix(s, n, inter.y);
+}
+
+float movingNoise(vec2 p, float time)
+{
+	float total = 0.;
+	total += smoothNoise(p     - time);
+	total += smoothNoise(p*2.  + time) / 2.;
+	total += smoothNoise(p*4.  - time) / 4.;
+	total += smoothNoise(p*8.  + time) / 8.;
+	total += smoothNoise(p*16. - time) / 16.;
+	total /= 1. + 1./2. + 1./4. + 1./8. + 1./16.;
+	return total;
+}
+
+float nestedNoise(vec2 p, float time)
+{
+	float x = movingNoise(p, time);
+	float y = movingNoise(p + 100., time);
+	return movingNoise(p + vec2(x, y), time);
+}
+</div>
+
+<div id="~">
+	// bump mapping shader code that may or may not be supported by a user's hardware (because of dFdx/dFdy), so it's included conditionally
+	vec4 bump = texture2D(s4, uv.xy * (50. + 200. * m)) - 0.5;
+	bump.xy = mix(bump.zw, bump.xy, m);
+	vec3 dpdx = dFdx(position);
+	vec3 dpdy = dFdy(position);
+	vec2 dudx = dFdx(uv.xy) * uniformData.w * (1. + 4. * m) * uniformData.x;
+	vec2 dudy = dFdy(uv.xy) * uniformData.w * (1. + 4. * m);
+	float dhdx = dot(bump.xy, dudx);
+	float dhdy = dot(bump.xy, dudy);
+	vec3 r1 = cross(dpdy, n);
+	vec3 r2 = cross(n, dpdx);
+	vec3 grad = (r1 * dhdx + r2 * dhdy) / dot(dpdx, r1);
+	n = normalize(n - grad * 0.1 + (1. - m * 0.2));
+</div>
+</div>
+<script>
+// let's wrap everything in a top-level anonymous function so the minifier knows that all the var's inside this are not actually global and can be shortened
+(function()
+{
+	// these are defined just for brevity; it doesn't help with the overall size because the zip algorithm compresses duplicate strings very well,
+	// but it means I have to type less. Except now I've written this long comment, so all in all it's completely useless.
+	var d = document;
+	d.e = d.getElementById;
+	var F = Float32Array;
+	var e = addEventListener;
+
+	// a bunch of useful globals
+	var gl, 						// the webgl context
+		canvas, 					// the webgl canvas element
+		glClearMask, 				// the mask used to clear the webgl buffer
+		worldToClip, 				// a matrix to go from world space to clip space
+		cameraToClip, 				// a matrix to go from camera space to clip space
+		uniformData,				// a vector of useful values to use in shaders (time, aspect ratio etc)
+		mainFramebuffer, 			// the current frame buffer
+		previousFramebuffer, 		// the previous frame's frame buffer
+		mainFrameTexture, 			// the current frame buffer to be used as a texture
+		previousFrameTexture, 		// the previous frame buffer to be used as a texture
+		composite, 					// the full-screen quad used in the final composite pass
+		renderbuffer, 				// the current render buffer
+		markerSpeed,				// the speed of balls. When I say marker, I mean ball
+		numMarkers, 				// number of balls
+		score, 						// current score
+		markersObject, 				// balls - literally
+		levelStartTime, 			// when we started the current level
+		levelTime, 					// current time left for the current level
+		musicToggle, 				// function to toggle music tracks on
+		musicStop, 					// function to stop music
+		musicPlay,					// function to play music, no shit
+		musicInitialized, 			// whether the music has been initialized
+		lastLoopTime, 				// the last time we drew something onto the screen
+		timeAdjust, 				// time scale factor to compensate for slow frames
+		stdDerivativesSupported, 	// whether we can use dFdx and dFdy in our shaders (for bump mapping)
+		theta;						// current camera rotation angle along the x axis
+	var cameraPosition = [0, 1.2, 110];		// where the camera is in the world
+	var keysDown = {};						// which keys are currently pressed
+	var heightMap = [];						// the terrain height map
+	var sceneObjects = [];					// objects in the scene
+	var time = 0;							// global time for cool shader effects
+	var speed = 0;							// our own movement speed
+	var rotationSpeed = 0;					// our own rotation speed
+	var markerPositions = [];				// the position of balls in the world
+	var markerColors = [];					// the colors of balls
+	var markerTargets = [];					// where balls are currently moving to
+	var tintColor = new F([1, 1, 1, 1]);	// a global tint color that is used for both the 'game over' and the 'correct ball' effects in the composite shader
+	var gameState = 'loading';				// current game state
+	var currentLevel = 0;					// current level
+	var worldToCamera = [1, 0, 0, 0,		// a matrix to go from world space to camera space
+		0, 0, 1, 0,
+		0, -1, 0, 0,
+		0, -1.2, -150, 1];
+
+	// an array of gradients (for noise calculations)
+	var grad3 = [[1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0], [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1], [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]];
+
+	// a special dot product function used in perlin noise calculations
+	var perlinDot = function (g, x, y, z)
+	{
+		return g[0] * x + g[1] * y + g[2] * z;
+	};
+
+	// linear interpolation
+	var mix = function (a, b, t)
+	{
+		return (1 - t) * a + t * b;
+	};
+
+	// fade function - and right here I'm stopping writing useless comments
+	var fade = function (t)
+	{
+		return t * t * t * (t * (t * 6 - 15) + 10);
+	};
+
+	// classic Perlin noise in 3D (inspired by an implementation I found somewhere on github)
+	var NoiseGenerator = function (numOctaves, attenuation, roughness, startingOctave)
+	{
+		startingOctave = startingOctave || 0;
+		var p = [];
+		for (var i = 0; i < 256; i++)
+		{
+			p[i] = Math.floor(Math.random() * 256);
+		}
+		// To remove the need for index wrapping, double the permutation table length
+		var perm = [];
+		for (i = 0; i < 512; i++)
+		{
+			perm[i] = p[i & 255];
+		}
+
+		var n = function (x, y, z)
+		{
+			// Find unit grid cell containing point
+			var X = Math.floor(x);
+			var Y = Math.floor(y);
+			var Z = Math.floor(z);
+
+			// Get relative xyz coordinates of point within that cell
+			x = x - X;
+			y = y - Y;
+			z = z - Z;
+
+			// Wrap the integer cells at 255 (smaller integer period can be introduced here)
+			X = X & 255;
+			Y = Y & 255;
+			Z = Z & 255;
+
+			// Calculate a set of eight hashed gradient indices
+			var gi000 = perm[X + perm[Y + perm[Z]]] % 12;
+			var gi001 = perm[X + perm[Y + perm[Z + 1]]] % 12;
+			var gi010 = perm[X + perm[Y + 1 + perm[Z]]] % 12;
+			var gi011 = perm[X + perm[Y + 1 + perm[Z + 1]]] % 12;
+			var gi100 = perm[X + 1 + perm[Y + perm[Z]]] % 12;
+			var gi101 = perm[X + 1 + perm[Y + perm[Z + 1]]] % 12;
+			var gi110 = perm[X + 1 + perm[Y + 1 + perm[Z]]] % 12;
+			var gi111 = perm[X + 1 + perm[Y + 1 + perm[Z + 1]]] % 12;
+
+			// Calculate noise contributions from each of the eight corners
+			var n000 = perlinDot(grad3[gi000], x, y, z);
+			var n100 = perlinDot(grad3[gi100], x - 1, y, z);
+			var n010 = perlinDot(grad3[gi010], x, y - 1, z);
+			var n110 = perlinDot(grad3[gi110], x - 1, y - 1, z);
+			var n001 = perlinDot(grad3[gi001], x, y, z - 1);
+			var n101 = perlinDot(grad3[gi101], x - 1, y, z - 1);
+			var n011 = perlinDot(grad3[gi011], x, y - 1, z - 1);
+			var n111 = perlinDot(grad3[gi111], x - 1, y - 1, z - 1);
+			// Compute the fade curve value for each of x, y, z
+			var u = fade(x);
+			var v = fade(y);
+			var w = fade(z);
+			// Interpolate along x the contributions from each of the corners
+			var nx00 = mix(n000, n100, u);
+			var nx01 = mix(n001, n101, u);
+			var nx10 = mix(n010, n110, u);
+			var nx11 = mix(n011, n111, u);
+			// Interpolate the four results along y
+			var nxy0 = mix(nx00, nx10, v);
+			var nxy1 = mix(nx01, nx11, v);
+			// Interpolate the two last results along z
+			return mix(nxy0, nxy1, w);
+		};
+
+		this.noise = function (x, y, z)
+		{
+			var a = Math.pow(attenuation, -startingOctave);
+			var f = Math.pow(roughness, startingOctave);
+			var m = 0;
+			for (var i = startingOctave; i < numOctaves + startingOctave; i++)
+			{
+				m += n(x * f, y * f, z * f) * a;
+				a /= attenuation;
+				f *= roughness;
+			}
+			return m / numOctaves;
+		};
+	};
+
+	// on resize do this (do it once on load too)
+	window.s = function ()
+	{
+		if (gl)
+		{
+			canvas.width = mainFramebuffer.width = previousFramebuffer.width = innerWidth;
+			canvas.height = mainFramebuffer.height = previousFramebuffer.height = innerHeight;
+			var oldRenderbuffer = renderbuffer;
+			renderbuffer = gl.createRenderbuffer();
+			gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+			gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, canvas.width, canvas.height);
+			gl.bindTexture(gl.TEXTURE_2D, mainFrameTexture);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, mainFramebuffer.width, mainFramebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+			gl.bindTexture(gl.TEXTURE_2D, previousFrameTexture);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, mainFramebuffer.width, mainFramebuffer.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+			gl.bindFramebuffer(gl.FRAMEBUFFER, mainFramebuffer);
+			gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
+			gl.bindFramebuffer(gl.FRAMEBUFFER, previousFramebuffer);
+			gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
+			gl.viewport(0, 0, canvas.width, canvas.height);
+			oldRenderbuffer && gl.deleteRenderbuffer(oldRenderbuffer);
+		}
+	};
+
+	// on load do this
+	window.f = function ()
+	{
+		// create a canvas
+		canvas = d.e('c');
+		gl = canvas.getContext('webgl', {premultipliedAlpha: false});
+		c.style.width = c.style.height = '100%';
+
+		// set up web gl
+		mainFramebuffer = gl.createFramebuffer();
+		gl.bindFramebuffer(gl.FRAMEBUFFER, mainFramebuffer);
+		mainFrameTexture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D, mainFrameTexture);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, mainFrameTexture, 0);
+
+		previousFramebuffer = gl.createFramebuffer();
+		previousFrameTexture = gl.createTexture();
+		gl.bindFramebuffer(gl.FRAMEBUFFER, previousFramebuffer);
+		gl.bindTexture(gl.TEXTURE_2D, previousFrameTexture);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, previousFrameTexture, 0);
+
+		glClearMask = gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT;
+		gl.clearColor(0, 0, 0, 1);
+		gl.clear(glClearMask);
+		gl.enable(gl.CULL_FACE);
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		stdDerivativesSupported = gl.getExtension('OES_standard_derivatives');
+
+		// resize
+		s();
+
+		var createObject = function (vertexSource, fragmentSource, vertices, indices, normals, textures, transparent)
+		{
+			// get source from the DOM as a string
+			vertexSource = d.e(vertexSource).textContent;
+			fragmentSource = d.e(fragmentSource).textContent.replace('@', d.e('x').textContent);
+			fragmentSource = fragmentSource.replace('~', stdDerivativesSupported? d.e('~').textContent : '');
+
+			// compile source
+			var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+			var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+			gl.shaderSource(vertexShader, vertexSource);
+			gl.shaderSource(fragmentShader, fragmentSource);
+			gl.compileShader(vertexShader);
+			gl.compileShader(fragmentShader);
+
+			// create a shader program and link it
+			var shaderProgram = gl.createProgram();
+			gl.attachShader(shaderProgram, vertexShader);
+			gl.attachShader(shaderProgram, fragmentShader);
+			gl.linkProgram(shaderProgram);
+			console.log('***');
+			console.log(gl.getShaderInfoLog(vertexShader));
+			console.log(gl.getShaderInfoLog(fragmentShader));
+			console.log(gl.getProgramInfoLog(shaderProgram));
+
+			// set up vertex buffer
+			shaderProgram.v = gl.getAttribLocation(shaderProgram, 'v');
+			gl.enableVertexAttribArray(shaderProgram.v);
+			var vertexBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, new F(vertices), gl.STATIC_DRAW);
+
+			// set up normal buffer
+			if (normals)
+			{
+				shaderProgram.n = gl.getAttribLocation(shaderProgram, 'n');
+				gl.enableVertexAttribArray(shaderProgram.n);
+				var normalBuffer = gl.createBuffer();
+				gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+				gl.bufferData(gl.ARRAY_BUFFER, new F(normals), gl.STATIC_DRAW);
+			}
+
+			// set up textures
+			shaderProgram.s = [];
+			if (textures)
+			{
+				for (var i = 0; i < textures.length; i++)
+				{
+					shaderProgram.s[i] = gl.getUniformLocation(shaderProgram, 's' + i);
+				}
+			}
+
+			// set up uniform locations
+			shaderProgram.b = gl.getUniformLocation(shaderProgram, 'w2s');
+			shaderProgram.c = gl.getUniformLocation(shaderProgram, 'uniformData');
+			shaderProgram.d = gl.getUniformLocation(shaderProgram, 'w2c');
+			shaderProgram.e = gl.getUniformLocation(shaderProgram, 'c2s');
+			shaderProgram.f = gl.getUniformLocation(shaderProgram, 'positions');
+			shaderProgram.g = gl.getUniformLocation(shaderProgram, 'tintColor');
+
+			var indexBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+			shaderProgram.draw = function ()
+			{
+				if (transparent)
+				{
+					gl.enable(gl.BLEND);
+					gl.depthMask(false);
+				}
+				else
+				{
+					gl.disable(gl.BLEND);
+					gl.depthMask(true);
+				}
+				gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+				gl.useProgram(shaderProgram);
+				gl.vertexAttribPointer(shaderProgram.v, 4, gl.FLOAT, false, 0, 0);
+				if (normals)
+				{
+					gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+					gl.vertexAttribPointer(shaderProgram.n, 3, gl.FLOAT, false, 0, 0);
+				}
+				for (var i = 0; i < shaderProgram.s.length; i++)
+				{
+					gl.activeTexture(gl['TEXTURE' + i]);
+					gl.bindTexture(gl.TEXTURE_2D, textures[i] == mainFrameTexture ? previousFrameTexture : textures[i]);
+					gl.uniform1i(shaderProgram.s[i], i);
+				}
+				shaderProgram.b && gl.uniformMatrix4fv(shaderProgram.b, false, worldToClip);
+				shaderProgram.c && gl.uniform4fv(shaderProgram.c, uniformData);
+				shaderProgram.d && gl.uniformMatrix4fv(shaderProgram.d, false, worldToCamera);
+				shaderProgram.e && gl.uniformMatrix4fv(shaderProgram.e, false, cameraToClip);
+				shaderProgram.f && gl.uniform4fv(shaderProgram.f, markerPositions);
+				shaderProgram.g && gl.uniform4fv(shaderProgram.g, tintColor);
+				gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+			};
+
+			// return the shader
+			return shaderProgram;
+		};
+
+		var textureFromCanvas = function (canvas)
+		{
+			var texture = gl.createTexture();
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+			gl.generateMipmap(gl.TEXTURE_2D);
+			gl.bindTexture(gl.TEXTURE_2D, null);
+			return texture;
+		};
+
+		// generate textures based on a bunch of input parameters using perlin noise
+		// if wrap is set, use toroidal unwrapping to make them tileable (see http://gamedev.stackexchange.com/a/23705)
+		var generateTexture = function (size, data, baseColor, wrap)
+		{
+			var canvas = d.createElement('canvas');
+			canvas.width = canvas.height = size;
+			var context = canvas.getContext('2d');
+			var imageDataObject = context.createImageData(size, size);
+			var imageData = imageDataObject.data;
+			for (var i = 0; i < size * size * 4; i += 4)
+			{
+				imageData[i] = baseColor[0];
+				imageData[i + 1] = baseColor[1];
+				imageData[i + 2] = baseColor[2];
+				imageData[i + 3] = baseColor[3];
+			}
+			var twoPi = Math.PI * 2;
+			var at = 1;
+			var ct = 4;
+			for (i = 0; i < data.length; i++)
+			{
+				var k = data[i];
+				var n = new NoiseGenerator(k.o, k.a, k.r, k.s);
+				var p = 0;
+				for (var y = 0; y < size; y++)
+				{
+					for (var x = 0; x < size; x++)
+					{
+						var xt = (ct + at * Math.cos(twoPi * y / size)) * Math.cos(twoPi * x / size);
+						var yt = (ct + at * Math.cos(twoPi * y / size)) * Math.sin(twoPi * x / size);
+						var zt = at * Math.sin(twoPi * y / size);
+						var v = Math.abs(n.noise(wrap ? xt : x / size, wrap ? yt : y / size, wrap ? zt : 0));
+						for (var c = 0; c < 3; c++, p++)
+						{
+							imageData[p] += v * k.c[c] * k.c[3];
+						}
+						p++;
+					}
+				}
+			}
+			context.putImageData(imageDataObject, 0, 0);
+			return textureFromCanvas(canvas);
+		};
+
+		// precomputed derivative map for bump mapping (see http://mmikkelsen3d.blogspot.co.uk/2011/07/derivative-maps.html)
+		var derivativeTexture = function ()
+		{
+			var canvas = d.createElement('canvas');
+			canvas.width = canvas.height = mapSize;
+			var context = canvas.getContext('2d');
+			var imageDataObject = context.createImageData(mapSize, mapSize);
+			var imageData = imageDataObject.data;
+			var twoPi = Math.PI * 2;
+			var at = 1;
+			var ct = 4;
+            var n0 = new NoiseGenerator(8, 2, 3, 0);
+            var n1 = new NoiseGenerator(4, 3, 1.5, 0);
+            var p = 0;
+            for (var y = 0; y < mapSize; y++)
+            {
+                for (var x = 0; x < mapSize; x++)
+                {
+                    var points = [];
+                    for (var i=-1; i<2; i++)
+                    {
+                        points[i] = [];
+                        for (var j=-1; j<2; j++)
+                        {
+                            var xt = (ct + at * Math.cos(twoPi * (y + j) / mapSize)) * Math.cos(twoPi * (x + i) / mapSize);
+                            var yt = (ct + at * Math.cos(twoPi * (y + j) / mapSize)) * Math.sin(twoPi * (x + i) / mapSize);
+                            var zt = at * Math.sin(twoPi * (y + j) / mapSize);
+                            points[i][j] = {a: Math.abs(n0.noise(xt, yt, zt)), b: Math.abs(n1.noise(xt, yt, zt))};
+                        }
+                    }
+                    imageData[p++] = Math.floor((points[-1][0].a + points[1][0].a - 2 * points[0][0].a) * 1024 + 128);
+                    imageData[p++] = Math.floor((points[0][-1].a + points[0][1].a - 2 * points[0][0].a) * 1024 + 128);
+                    imageData[p++] = Math.floor((points[-1][0].b + points[1][0].b - 2 * points[0][0].b) * 1024 + 128);
+                    imageData[p++] = Math.floor((points[0][-1].b + points[0][1].b - 2 * points[0][0].b) * 1024 + 128);
+                }
+            }
+			context.putImageData(imageDataObject, 0, 0);
+			return textureFromCanvas(canvas);
+		};
+
+		// multiply 4x4 matrices together
+		var matrixMultiply = function (a, b)
+		{
+			var c = new F(16);
+			for (var i = 0; i < 4; i++)
+			{
+				for (var j = 0; j < 4; j++)
+				{
+					c[j * 4 + i] = 0;
+					for (var k = 0; k < 4; k++)
+					{
+						c[j * 4 + i] += a[k * 4 + i] * b[j * 4 + k];
+					}
+				}
+			}
+			return c;
+		};
+
+		// this is done every frame - it's the rendering loop that also calls the game loop (wrong I know, but we need to be concise)
+		var drawLoop = function ()
+		{
+			// request next animation frame
+			requestAnimationFrame(drawLoop);
+
+			// run the game loop - shouldn't be called from here really, but let's keep it short and simple
+			var now = performance.now();
+			timeAdjust = lastLoopTime ? (now - lastLoopTime) / (1000 / 60) : 1;
+			lastLoopTime = now;
+			gameLoops[gameState] && gameLoops[gameState](timeAdjust);
+
+			// swap buffers
+			var t = previousFramebuffer;
+			previousFramebuffer = mainFramebuffer;
+			mainFramebuffer = t;
+			t = previousFrameTexture;
+			previousFrameTexture = mainFrameTexture;
+			mainFrameTexture = t;
+
+			// bind off-screen frame buffer
+			gl.bindFramebuffer(gl.FRAMEBUFFER, mainFramebuffer);
+
+			// clear
+			gl.clear(glClearMask);
+
+			// build a view-projection matrix
+			var fov = 45;
+			var aspectRatio = canvas.width / canvas.height;
+			var near = 0.1;
+			var far = 20000;
+			var f = 1 / Math.tan(fov * Math.PI / 360);
+			cameraToClip = new F([f / aspectRatio, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) / (near - far), -1, 0, 0, 2 * far * near / (near - far), 0]);
+			worldToClip = matrixMultiply(cameraToClip, worldToCamera);
+			uniformData = new F([aspectRatio, time++ / 10, -worldToCamera[13], canvas.height]);
+
+			// draw to an off-screen render target
+			for (var i = 0; i < sceneObjects.length; i++)
+			{
+				sceneObjects[i].draw();
+			}
+
+			// composite onto the screen
+			gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+			sceneObjects.length && composite.draw();
+		};
+
+		var rotateCameraY = function (theta)
+		{
+			var c = Math.cos(theta);
+			var s = Math.sin(theta);
+			var rot = new F([c, 0, s, 0,
+				0, 1, 0, 0,
+				-s, 0, c, 0,
+				0, 0, 0, 1]);
+			worldToCamera = matrixMultiply(rot, worldToCamera);
+
+			// cheap re-orthonormalization (can make a lot of assumptions based on the fact that we're rotating around a world-aligned axis)
+			var l = Math.sqrt(worldToCamera[2] * worldToCamera[2] + worldToCamera[10] * worldToCamera[10]);
+			worldToCamera[8] = -(worldToCamera[2] /= l);
+			worldToCamera[0] = (worldToCamera[10] /= l);
+		};
+
+		// cheap and slightly inaccurate way to get the height of the terrain at any particular point
+		var terrainHeight = function (cx, cz)
+		{
+			var x = cx + mapSize / 2;
+			var z = cz + mapSize / 2;
+			var xf = Math.floor(x);
+			var zf = Math.floor(z);
+			var xc = Math.ceil(x);
+			var zc = Math.ceil(z);
+			var h = function (X, Z)
+			{
+				return Math.max(waterHeight, heightMap[X] && heightMap[X][Z] || 0);
+			};
+			return Math.max(h(xf, zf), Math.max(h(xf, zc), Math.max(h(xc, zf), h(xc, zc)))) + 0.4;
+		};
+
+		// update the position of balls
+		var updateMarkers = function ()
+		{
+			for (var i = 0; i < numMarkers; i++)
+			{
+				if (markerTargets[i] && markerPositions[i * 4 + 3])
+				{
+					var vx = markerTargets[i].x - markerPositions[i * 4];
+					var vz = markerTargets[i].z - markerPositions[i * 4 + 2];
+					var l = Math.sqrt(vx * vx + vz * vz);
+					if (l <= markerSpeed * timeAdjust)
+					{
+						markerPositions[i * 4] = markerTargets[i].x;
+						markerPositions[i * 4 + 2] = markerTargets[i].z;
+						if ((currentLevel & 1) || currentLevel > 8)
+						{
+							markerSpeed = 0.07 + currentLevel / 20;
+							markerTargets[i].x = (Math.random() - 0.5) * mapSize * 0.9;
+							markerTargets[i].z = (Math.random() - 0.5) * mapSize * 0.9;
+						}
+						else
+						{
+							markerTargets[i] = null;
+						}
+					}
+					else
+					{
+						vx *= markerSpeed / l;
+						vz *= markerSpeed / l;
+						markerPositions[i * 4] += vx * timeAdjust;
+						markerPositions[i * 4 + 2] += vz * timeAdjust;
+					}
+					markerPositions[i * 4 + 1] = markerPositions[i * 4 + 1] * 0.5 + (terrainHeight(markerPositions[i * 4], markerPositions[i * 4 + 2]) + 3.5) * 0.5;
+				}
+			}
+			for (i = 0; i < 3; i++)
+			{
+				tintColor[i] = Math.min(1, tintColor[i] + 0.018);
+			}
+		};
+
+		var moveCamera = function ()
+		{
+			speed = (gameState == 'running') ? (((keysDown[83] || keysDown[40] || 0) - (keysDown[87] || keysDown[38] || 0)) * 0.5) || (speed * 0.95) : (speed * 0.95);
+			rotationSpeed = (gameState == 'running') ? ((keysDown[65] || keysDown[37] || 0) - (keysDown[68] || keysDown[39] || 0)) * 0.04 || rotationSpeed * 0.87 : rotationSpeed * 0.87;
+			if (Math.abs(speed) < 0.001)
+			{
+				speed = 0;
+			}
+			if (Math.abs(rotationSpeed) < 0.001)
+			{
+				rotationSpeed = 0;
+			}
+			if (speed)
+			{
+				worldToCamera[14] -= speed * timeAdjust;
+				cameraPosition[0] += speed * worldToCamera[2] * timeAdjust;
+				cameraPosition[2] += speed * worldToCamera[10] * timeAdjust;
+				var height = terrainHeight(cameraPosition[0], cameraPosition[2]);
+				var newHeight = height > cameraPosition[1] ? height * 0.5 + cameraPosition[1] * 0.5 : cameraPosition[1] * 0.9 + height * 0.1;
+				worldToCamera[13] = -(cameraPosition[1] = newHeight);
+			}
+			rotateCameraY(rotationSpeed * timeAdjust);
+		};
+
+		// do different things depending on the current game state
+		var gameLoops =
+		{
+			loading: function()
+			{
+				if (musicInitialized)
+				{
+                    musicPlay();
+                    for (var i = 0; i < 6; i++)
+                    {
+                        musicToggle(i);
+                    }
+                    gameState = 'starting';
+                    setTimeout(function()
+                    {
+                        gameState = 'menu';
+                        d.e('s').textContent = 'Click to start';
+                    }, 3000);
+				}
+			},
+			levelStart: function ()
+			{
+				// cool fade-out effect
+				if (tintColor[3] > 0)
+				{
+					tintColor[3] -= 0.003 * timeAdjust;
+				}
+				else
+				{
+					tintColor[3] = 0;
+				}
+
+				// camera transition
+				var c = Math.cos(theta);
+				var s = Math.sin(theta);
+				if (c >= 0.999)
+				{
+					c = 1;
+					s = 0;
+				}
+				worldToCamera[5] = worldToCamera[10] = c;
+				worldToCamera[9] = -(worldToCamera[6] = s);
+				theta -= 0.0058 * timeAdjust;
+				worldToCamera[14] = Math.min(worldToCamera[14] + 0.2 * timeAdjust, -110);
+				updateMarkers();
+				if (!s)
+				{
+					sceneObjects.splice(sceneObjects.indexOf(menuBack), 1);
+					gameState = 'running';
+					levelStartTime = Date.now();
+				}
+			},
+			running: function ()
+			{
+				// update timer
+				var t = Math.floor(Math.max((currentLevel < 10 ? 60 : 10), 60 - currentLevel * 3) - (Date.now() - levelStartTime) / 1000);
+				if (t != levelTime)
+				{
+					d.e('.').textContent = levelTime = t;
+				}
+				if (t <= 0)
+				{
+					gameState = 'lost';
+					musicStop();
+					setTimeout(gameOver, 1000);
+					speak('too slow');
+					return;
+				}
+
+				// movement
+				moveCamera();
+				updateMarkers();
+
+				// check to see if we're near enough to any markers
+				for (var i = 0; i < numMarkers; i++)
+				{
+					// check that marker is visible
+					if (markerPositions[i * 4 + 3])
+					{
+						var dx = cameraPosition[0] - markerPositions[i * 4];
+						var dz = cameraPosition[2] - markerPositions[i * 4 + 2];
+						if (dx * dx + dz * dz < 7 * 7)
+						{
+							// near a marker - is it the right type?
+							var remaining = 0;
+							for (var j = 0; j < numMarkers; j++)
+							{
+								remaining += markerPositions[j * 4 + 3];
+							}
+							if (i == remaining - 1)
+							{
+								// let's get it.
+								tintColor = new F([markerColors[i].r, markerColors[i].g, markerColors[i].b, 0]);
+								markerPositions[i * 4 + 3] = 0;
+								var messages = ['yeah', 'good', 'well done', 'great', 'correct', 'yes', 'good memory', 'keep going', 'awesome', 'cool', 'ok', 'whoo hoo', 'nice one', 'excellent'];
+								d.e(',').textContent = (score += (currentLevel + 1) * 10);
+								d.e('9').style.opacity = 1;
+								setTimeout(function ()
+								{
+									d.e('9').style.opacity = 0
+								}, 250);
+
+								// play music
+								musicToggle(markerColors[i].i);
+
+								// have we completed the level?
+								if (!--remaining)
+								{
+									gameState = 'won';
+									setTimeout(levelComplete, 800);
+								}
+							}
+							else
+							{
+								// oh shit, wrong color
+								tintColor = new F([markerColors[i].r, markerColors[i].g, markerColors[i].b, 1]);
+								markerPositions[i * 4 + 3] = 0;
+								gameState = 'lost';
+								messages = ['that was wrong', 'nope', 'damn', 'oh no', 'wrong one', 'whoops'];
+								musicStop();
+								setTimeout(gameOver, 1000);
+							}
+							speak(messages[Math.floor(Math.random() * messages.length)]);
+						}
+					}
+				}
+			},
+			lost: function ()
+			{
+				moveCamera();
+				updateMarkers();
+			}
+		};
+
+		// handy function to get a value from the height map without worrying about edge cases
+		var heightMapValue = function (x, y, heightMap, mapSize)
+		{
+			if (x < 0) x += mapSize;
+			if (x > mapSize) x -= mapSize;
+			if (y < 0) y += mapSize;
+			if (y > mapSize) y -= mapSize;
+			return heightMap[x] && heightMap[x][y] || 0;
+		};
+
+		// this function makes balls - in reality they're just camera-facing quads with a circle texture
+		var createMarkers = function (data)
+		{
+			var vertexBuffer = [];
+			var indexBuffer = [];
+			var normalBuffer = [];
+
+			for (var i = 0; i < data.length; i++)
+			{
+				var d = data[i];
+				vertexBuffer.push(i, 0, 0, 0, i, 0, 0, 9999, i, 0, 0, 9999.999, i, 0, 0, 0.999);
+				indexBuffer.push(i * 4,  i * 4 + 2, i * 4 + 1, i * 4,  i * 4 + 3, i * 4 + 2);
+				for (var j = 0; j < 4; j++)
+				{
+					normalBuffer.push(d.r, d.g, d.b);
+				}
+			}
+			return createObject('j', 'k', vertexBuffer, indexBuffer, normalBuffer, [previousFrameTexture], true);
+		};
+
+		// the menu that gets displayed at the start of each level
+		var sequenceMenu = function ()
+		{
+			if (!currentLevel)
+			{
+				d.e(',').textContent = score = 0;
+			}
+			d.e('0').style.display = '';
+			var clickListener = function ()
+			{
+				for (var i = 0; i < markerColors.length; i++)
+				{
+
+					markerColors[i].d.style.width = markerColors[i].d.style.height = 0;
+				}
+				d.e('$').style.opacity = d.e('2').style.opacity = 1;
+				d.e('$').style.display = d.e('2').style.display = '';
+                d.e('1').removeEventListener('click', clickListener);
+                setTimeout(function()
+                {
+                    musicPlay();
+                    gameState = 'starting';
+                    d.e('2').style.opacity = 0;
+                    d.e('$').style.opacity = 1;
+                    d.e('0').style.display = 'none';
+                    setTimeout(startLevel, 1000);
+                }, 500);
+			};
+			d.e('1').addEventListener('click', clickListener);
+
+			// hide loading screen
+			var loadingScreen = d.e('$');
+			loadingScreen.style.opacity = 0;
+			gameState = 'sequenceMenu';
+
+			// remove previous ui elements if any (from the previous time this menu was shown)
+			var uiElements = document.querySelectorAll('.j');
+			for (var i = 0; i < uiElements.length; i++)
+			{
+				d.e('v').removeChild(uiElements[i]);
+			}
+
+			// set header text
+			d.e('!').textContent = currentLevel + 1;
+
+			// create markers - first scramble color array
+			numMarkers = Math.min(6, Math.floor(3 + currentLevel / 2));
+			var colors = [{r: 1, g: 1, b: 0, n: 'yellow', i: 0},
+						  {r: 0, g: 0, b: 1, n: 'blue', i: 1},
+						  {r: 0, g: 1, b: 0, n: 'green', i: 4},
+						  {r: 1, g: 0, b: 0, n: 'red', i: 3},
+						  {r: 0, g: 1, b: 1, n: 'cyan', i: 2},
+						  {r: 1, g: 0, b: 1, n: 'purple', i: 5}];
+			for (i = 0; i < numMarkers; i++)
+			{
+				var c1 = Math.floor(Math.random() * numMarkers);
+				var c2 = Math.floor(Math.random() * numMarkers);
+				var t = colors[c1];
+				colors[c1] = colors[c2];
+				colors[c2] = t
+			}
+			markerColors.length = markerPositions.length = markerTargets.length = 0;
+			var heightAtCenter = terrainHeight(0, 0) + 3.5;
+			for (i = 0; i < numMarkers; i++)
+			{
+				(function (i)
+				{
+					markerColors.push(colors[i]);
+					markerPositions.push(0, heightAtCenter, 0, 0);
+					if (i < numMarkers - 1)
+					{
+						do
+						{
+							var target = {
+								x: (Math.random() - 0.5) * mapSize * 0.8,
+								z: (Math.random() - 0.5) * mapSize * 0.8
+							};
+							var minDist = 100;
+							for (j = 0; j < i; j++)
+							{
+								var dx = markerTargets[j].x - target.x;
+								var dz = markerTargets[j].z - target.z;
+								minDist = Math.min(minDist, dx * dx + dz * dz);
+							}
+						}
+						while (target.x * target.x + target.z * target.z < 10 || minDist < 100);
+					}
+					else
+					{
+						target = {x: 0, z: 90};
+					}
+					markerTargets.push(target);
+
+					// ui element
+					colors[i].d = document.createElement('div');
+					colors[i].d.className = 'j';
+					colors[i].d.style.background = colors[i].n;
+					d.e('v').appendChild(colors[i].d);
+					setTimeout(function ()
+					{
+						colors[i].d.style.marginTop = '5%';
+					}, i * 1500 + 1000)
+				})(i);
+			}
+			markersObject = createMarkers(markerColors);
+			setTimeout(function ()
+			{
+				d.e('1').style.display = '';
+			}, numMarkers * 1500 + 500);
+		};
+
+		var startLevel = function ()
+		{
+			sceneObjects = [terrainObject, skyObject, waterObject, menuBack, markersObject];
+			speed = rotationSpeed = 0;
+
+			// get markers moving
+			markerSpeed = 2;
+			for (i = 0; i < numMarkers; i++)
+			{
+				markerPositions[i * 4 + 3] = 1;
+			}
+			gameState = 'levelStart';
+
+			tintColor[3] = 1;
+			worldToCamera = [1, 0, 0, 0,
+				0, 0, 1, 0,
+				0, -1, 0, 0,
+				0, -1.2, -150, 1];
+			cameraPosition[0] = 0;
+			cameraPosition[2] = 110;
+			worldToCamera[13] = -(cameraPosition[1] = terrainHeight(cameraPosition[0], cameraPosition[2]));
+
+			d.e('.').textContent = levelTime = Math.max((currentLevel < 10 ? 60 : 10), 60 - currentLevel * 3);
+
+			theta = Math.PI / 2;
+			// show ui
+			d.e('_').style.display = '';
+		};
+
+		// use voice synthesis where available, otherwise just display a message
+		var speak = function (message)
+		{
+			var U = window.SpeechSynthesisUtterance;
+			var S = window.speechSynthesis;
+			if (U && S)
+			{
+				var msg = new U(message);
+				msg.voice = S.getVoices()[1];
+				msg.rate = 0.7;
+				S.speak(msg);
+			}
+			d.e('%').className = 'k';
+			d.e('%').offsetWidth = d.e('%').offsetWidth;
+			d.e('%').textContent = message;
+			d.e('%').className = 'b';
+		};
+
+		var gameOver = function ()
+		{
+			currentLevel = 0;
+			d.e('5').style.display = '';
+			d.e('_').style.display = 'none';
+			d.e('p').textContent = score;
+			var bestScore = localStorage.b || 0;
+			if (score >= bestScore)
+			{
+				localStorage.b = score;
+				d.e('q').style.display = '';
+				d.e('o').textContent = '';
+			}
+			else
+			{
+				d.e('q').style.display = 'none';
+				d.e('o').textContent = 'best: ' + bestScore;
+			}
+		};
+
+		var levelComplete = function ()
+		{
+			musicStop();
+			d.e('$').style.opacity = d.e('2').style.opacity = 0;
+			d.e('$').style.display = d.e('2').style.display = '';
+			d.e(':').textContent = 'W3LL DON3';
+			d.e('s').style.display = 'none';
+			setTimeout(function ()
+			{
+				d.e('$').style.opacity = d.e('2').style.opacity = 1;
+				d.e('+').textContent = 'Time bonus: ' + (currentLevel + 1) * levelTime;
+				d.e('+').className = 'k';
+				d.e('+').offsetWidth = d.e('+').offsetWidth;
+				d.e('+').className = 'l';
+				d.e(',').textContent = (score += (currentLevel + 1) * levelTime);
+				currentLevel++;
+				setTimeout(function ()
+				{
+					d.e('$').style.opacity = d.e('2').style.opacity = 0;
+					d.e('1').style.display = d.e('_').style.display = 'none';
+					sequenceMenu();
+					setTimeout(function ()
+					{
+						d.e('$').style.display = d.e('2').style.display = 'none';
+						d.e(':').textContent = 'R3V3RS3 IT!';
+						d.e('s').style.display = '';
+					}, 2000);
+				}, 1500);
+			}, 500);
+		};
+
+		d.e('6').addEventListener('click', function ()
+		{
+			d.e('5').style.display = d.e('1').style.display = 'none';
+			sequenceMenu();
+		});
+
+		// let's make music
+        var musicInit = function()
+        {
+			// create a main audio context with a master gain node - every tracks connects to a master compressor that is connected to the gain that is connected to the output
+            var audioContext = new AudioContext();
+            var masterGain = audioContext.createGain();
+            masterGain.connect(audioContext.destination);
+            var compressor = audioContext.createDynamicsCompressor();
+            compressor.connect(masterGain);
+
+            // normative musical note frequencies for the first octave
+			var freqs = [16.35, 18.35, 20.60, 21.83, 24.5, 27.5, 30.87];
+
+			// I want to reference notes with the "A4, B4, C5, ..." notation, and this bit of code makes it possible
+            for (var i = 0; i < 8; i++)
+            {
+                for (var j = 0; j < 7; j++)
+                {
+                    freqs[String.fromCharCode(65 + ((j + 2) % 7)) + i] = freqs[j] * Math.pow(2, i);
+                }
+            }
+
+            // create 6 offline audio contexts to pre-render our tracks into
+			var offlineAudioContexts = [];
+            for (i=0; i<6; i++)
+            {
+                offlineAudioContexts.push(new OfflineAudioContext(1, 44010 * 70, 44010));
+            }
+
+            // kick is a low-frequency sine wave with a short duration
+			var kick = function (time)
+            {
+                var osc = offlineAudioContexts[0].createOscillator();
+                var gain = offlineAudioContexts[0].createGain();
+                osc.connect(gain);
+                osc.frequency.setValueAtTime(150, time);
+                gain.gain.setValueAtTime(3, time);
+                osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+                gain.connect(offlineAudioContexts[0].destination);
+                osc.start(time);
+                osc.stop(time + 0.5);
+            };
+
+			// a noise buffer is useulf for snar and hihat
+            var noiseBuffer = audioContext.createBuffer(1, 44010, 44010);
+            var noiseBufferOutput = noiseBuffer.getChannelData(0);
+            for (i = 0; i < 44010; i++)
+            {
+                noiseBufferOutput[i] = Math.random() * 2 - 1;
+            }
+
+            // make noise, filter it (we only want the high frequencies) and add it to a low-frequency triangular wave
+			var snare = function (time)
+            {
+                var noise = offlineAudioContexts[1].createBufferSource();
+                noise.buffer = noiseBuffer;
+
+                var noiseFilter = offlineAudioContexts[1].createBiquadFilter();
+                noiseFilter.type = 'highpass';
+                noiseFilter.frequency.value = 1000;
+                noise.connect(noiseFilter);
+
+                var noiseEnvelope = offlineAudioContexts[1].createGain();
+                noiseFilter.connect(noiseEnvelope);
+                noiseEnvelope.connect(offlineAudioContexts[1].destination);
+
+                var osc = offlineAudioContexts[1].createOscillator();
+                osc.type = 'triangle';
+
+                var oscEnvelope = offlineAudioContexts[1].createGain();
+                osc.connect(oscEnvelope);
+                oscEnvelope.connect(offlineAudioContexts[1].destination);
+
+                noiseEnvelope.gain.setValueAtTime(1, time);
+                noiseEnvelope.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+                noise.start(time);
+
+                osc.frequency.setValueAtTime(100, time);
+                oscEnvelope.gain.setValueAtTime(0.7, time);
+                oscEnvelope.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                osc.start(time);
+
+                osc.stop(time + 0.2);
+                noise.stop(time + 0.2);
+            };
+
+            // just high frequency noise for a short duration
+			var hihat = function (time)
+            {
+                var noise = offlineAudioContexts[3].createBufferSource();
+                noise.buffer = noiseBuffer;
+
+                var noiseFilter = offlineAudioContexts[3].createBiquadFilter();
+                noiseFilter.type = 'highpass';
+                noiseFilter.frequency.value = 10000;
+                noise.connect(noiseFilter);
+
+                var noiseEnvelope = offlineAudioContexts[3].createGain();
+                noiseFilter.connect(noiseEnvelope);
+                noiseEnvelope.connect(offlineAudioContexts[3].destination);
+                noiseEnvelope.gain.setValueAtTime(0.7, time);
+                noiseEnvelope.gain.exponentialRampToValueAtTime(0.5, time + 0.05);
+                noiseEnvelope.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                noise.start(time);
+                noise.stop(time + 0.1);
+            };
+
+            // sawtooth, sine and triangular waves with different modulations make a nice bass sound
+			var bass = function (freq, duration, time)
+            {
+                var saw = offlineAudioContexts[2].createOscillator();
+                saw.type = 'sawtooth';
+                var sawEnvelope = offlineAudioContexts[2].createGain();
+                saw.connect(sawEnvelope);
+                sawEnvelope.connect(offlineAudioContexts[2].destination);
+                saw.frequency.setValueAtTime(freq, time);
+                sawEnvelope.gain.setValueAtTime(0.25, time);
+                sawEnvelope.gain.exponentialRampToValueAtTime(0.01, time + duration);
+
+                var saw2 = offlineAudioContexts[2].createOscillator();
+                saw2.connect(sawEnvelope);
+                saw2.frequency.setValueAtTime(freq / 2, time);
+
+                var tri = offlineAudioContexts[2].createOscillator();
+                tri.type = 'triangle';
+                var triEnvelope = offlineAudioContexts[2].createGain();
+                tri.connect(triEnvelope);
+                triEnvelope.connect(offlineAudioContexts[2].destination);
+                tri.frequency.setValueAtTime(freq, time);
+                triEnvelope.gain.setValueAtTime(0.3, time);
+                triEnvelope.gain.setValueAtTime(0.3, time + duration * 0.9);
+                triEnvelope.gain.exponentialRampToValueAtTime(0.01, time + duration);
+
+                saw.start(time);
+                saw.stop(time + duration);
+                saw2.start(time);
+                saw2.stop(time + duration);
+                tri.start(time);
+                tri.stop(time + duration);
+            };
+
+			// we need 2 echo nodes, obtained through feedback loops
+            var echo = [];
+            for (i = 0; i < 2; i++)
+            {
+                echo[i] = offlineAudioContexts[i+4].createGain();
+                var delay = offlineAudioContexts[i+4].createDelay();
+                var feedback = offlineAudioContexts[i+4].createGain();
+                var wetLevel = offlineAudioContexts[i+4].createGain();
+                var lowPass = offlineAudioContexts[i+4].createBiquadFilter();
+                delay.delayTime.value = 0.25;
+                feedback.gain.value = wetLevel.gain.value = 0.4;
+                lowPass.type = 'lowpass';
+                lowPass.frequency.value = 1000;
+                lowPass.connect(offlineAudioContexts[i+4].destination);
+                echo[i].connect(lowPass);
+                echo[i].connect(delay);
+                delay.connect(feedback);
+                delay.connect(wetLevel);
+                feedback.connect(delay);
+                wetLevel.connect(lowPass);
+            }
+
+			// main melody is a sine wave connected to an echo node
+            var tune = function (freq, duration, time)
+            {
+                var osc = offlineAudioContexts[5].createOscillator();
+                var oscEnvelope = offlineAudioContexts[5].createGain();
+                osc.connect(oscEnvelope);
+                oscEnvelope.connect(echo[1]);
+                osc.frequency.setValueAtTime(freq, time);
+                oscEnvelope.gain.setValueAtTime(0.5, time);
+                oscEnvelope.gain.setTargetAtTime(0.001, time + duration * 0.5, 0.3);
+
+                osc.start(time);
+                osc.stop(time + duration);
+            };
+
+			// the arpeggio line uses a triangular wave connected to an echo node
+            var arpeggio = function (freq, duration, time)
+            {
+                var osc = offlineAudioContexts[4].createOscillator();
+                osc.type = 'triangle';
+                var oscEnvelope = offlineAudioContexts[4].createGain();
+                osc.connect(oscEnvelope);
+                oscEnvelope.connect(echo[0]);
+                osc.frequency.setValueAtTime(freq, time);
+                oscEnvelope.gain.setValueAtTime(0.6, time);
+                oscEnvelope.gain.setTargetAtTime(0.0005, time + duration * 0.5, 0.5);
+
+                osc.start(time);
+                osc.stop(time + duration);
+            };
+
+			// this is putting all the notes together at the right times - not very readable (sorry) but short and sweet
+            var bassNotes = ['C2', 'C2', 'C2', 'C2', 'C2', 'C2', 'C2', 'C2', 'F1', 'F1', 'F1', 'F1', 'G1', 'G1', 'A1', 'B1'];
+            var tuneNotes = 'C5,,,C5,E5,,,E5,C5,,,C5,E5,,,E5,F5,,E5,,D5,,C5,,G4,,,,,G4,,B4,C5,,,C5,G5,,,G5,C6,,,C6,G5,,,E5,F5,,E5,,D5,,C5,,G5,,F5,,D5,,B4'.split(',');
+            var arpeggioNotes = 'C6,E6,G6,C7,E6,G6,C7,,C6,E6,G6,C7,E6,G6,C7,,F5,A5,C6,F6,A5,C6,F6,,G5,B5,D6,G6,B5,D6,G6'.split(',');
+            var t = audioContext.currentTime + 1;
+            var loopLength = 16 * 8 * 4;
+            var stepTime = 1 / 8;
+            for (i = 0; i <= loopLength; i++)
+            {
+                if (!(i % 4)) kick(t + i * stepTime);
+                if (!((i + 4) % 8)) snare(t + i * stepTime);
+                if (i % 16 > 12 || !((i + 2) % 4)) hihat(t + i * stepTime);
+                if (!((i + 2) % 4)) bass(freqs[bassNotes[Math.floor(i / 4) % 16]], 0.5, t + i * stepTime);
+                var tuneNote = tuneNotes[Math.floor(i / 2) % 64];
+                if (!(i % 4) && tuneNote) tune(freqs[tuneNote], 0.1, t + i * stepTime);
+                var arpeggioNote = arpeggioNotes[Math.floor(i / 2) % 32];
+                if (!(i % 4) && arpeggioNote) arpeggio(freqs[arpeggioNote], 0.1, t + i * stepTime);
+            }
+
+			// now we render each track into a separate buffer (asynchronously) and when we're done the music is ready to be played
+            var buffers = [];
+            var gains = [];
+            var tracks = [];
+            offlineAudioContexts.forEach(function(offlineAudioContext, i)
+            {
+                offlineAudioContext.startRendering().then(function(renderBuffer)
+                {
+                    var gain = audioContext.createGain();
+                    gain.connect(compressor);
+                    buffers[i] = renderBuffer;
+                    if (gains.push(gain) == 6)
+                    {
+                        musicInitialized = 1;
+                    }
+                });
+            });
+
+			// to stop the music fade out the master gain, and after a bit actually stop all the tracks
+            musicStop = function()
+            {
+                masterGain.gain.setTargetAtTime(0.001, audioContext.currentTime + 1, 0.5);
+                for (var i=0; i<6; i++)
+                {
+                    tracks[i].stop(audioContext.currentTime + 4.5);
+                }
+            };
+
+            // play all tracks, but set gains to 0 so you can't hear anything unless you enable the tracks with music toggle
+			musicPlay = function()
+            {
+                masterGain.gain.setValueAtTime(1, audioContext.currentTime);
+                tracks.length = 0;
+                for (var i=0; i<6; i++)
+                {
+                    var track = audioContext.createBufferSource();
+                    track.buffer = buffers[i];
+                    gains[i].gain.value = 0;
+                    track.connect(gains[i]);
+                    track.start(audioContext.currentTime + 1);
+                    tracks.push(track);
+                }
+            };
+
+            // control the gain of each track
+			musicToggle = function(channel)
+            {
+                gains[channel].gain.value = 1;
+            };
+        };
+
+		// initialize music
+		musicInit();
+
+		// hide menus when fade out is complete (good practice for performance reasons)
+		var loadingScreen = d.e('$');
+		var listener = function ()
+		{
+			loadingScreen.style.display = 'none';
+			d.e('2').removeChild(d.e('t'));
+			d.e('s').textContent = 'Loading';
+			loadingScreen.style.background = '#fff';
+			loadingScreen.removeEventListener('transitionend', listener);
+			var funkyTitle = d.e('2');
+			funkyTitle.style.transition = 'opacity 2s';
+			funkyTitle.addEventListener('transitionend', function ()
+			{
+				if (funkyTitle.style.opacity == "0")
+				{
+					funkyTitle.style.display = loadingScreen.style.display = 'none';
+				}
+			});
+		};
+		loadingScreen.addEventListener('transitionend', listener);
+		d.e('%').addEventListener('animationend', function ()
+		{
+			d.e('%').className = 'k';
+		});
+		d.e('+').addEventListener('animationend', function ()
+		{
+			d.e('+').className = 'k';
+		});
+
+		// initialize voice where available
+		speak('');
+
+		// key / mouse bindings
+		e('keydown', function (keyEvent)
+		{
+			keysDown[keyEvent.keyCode] = 1;
+		});
+		e('keyup', function (keyEvent)
+		{
+			keysDown[keyEvent.keyCode] = 0;
+		});
+		e('click', function (e)
+		{
+			if (gameState == 'menu')
+			{
+				musicStop();
+				sequenceMenu();
+			}
+		});
+
+		// generate a height map
+		var maxHeight = 15;
+		var mapSize = 256;
+		var p = new NoiseGenerator(6, 2, 2);
+		var min = 9999;
+		var max = -min;
+		for (i = 0; i < mapSize; i++)
+		{
+			heightMap[i] = [];
+			for (j = 0; j < mapSize; j++)
+			{
+				max = Math.max(max, heightMap[i][j] = Math.abs(p.noise(i / mapSize, j / mapSize, 0)));
+				min = Math.min(min, heightMap[i][j]);
+			}
+		}
+
+		// fade out the edges of the terrain
+		var fadeSize = 15;
+		for (i = 0; i < mapSize; i++)
+		{
+			for (j = 0; j < fadeSize; j++)
+			{
+				l = j / fadeSize;
+				heightMap[i][j] *= l;
+				heightMap[i][mapSize - 1 - j] *= l;
+				heightMap[j][i] *= l;
+				heightMap[mapSize - 1 - j][i] *= l;
+			}
+		}
+
+		// normalize the height map
+		for (i = 0; i < mapSize; i++)
+		{
+			for (j = 0; j < mapSize; j++)
+			{
+				heightMap[i][j] = (heightMap[i][j] - min) * maxHeight / (max - min);
+			}
+		}
+
+		// make a heightmap texture
+		var hmCanvas = d.createElement('canvas');
+		hmCanvas.width = hmCanvas.height = mapSize;
+		var hmContext = hmCanvas.getContext('2d');
+		var imageDataObject = hmContext.createImageData(mapSize, mapSize);
+		var imageData = imageDataObject.data;
+		var l = 0;
+		for (var j = 0; j < mapSize; j++)
+		{
+			for (var i = 0; i < mapSize; i++, l += 4)
+			{
+				imageData[l] = Math.floor(heightMap[i][j] * 255 / maxHeight);
+				imageData[l + 3] = 255;
+			}
+		}
+		hmContext.putImageData(imageDataObject, 0, 0);
+		var heightMapTexture = textureFromCanvas(hmCanvas);
+
+		// generate terrain geometry (vertices, indices and normals)
+		var terrainVertexBuffer = [];
+		var terrainNormalBuffer = [];
+		for (j = 0; j < mapSize; j++)
+		{
+			for (i = 0; i < mapSize; i++)
+			{
+				terrainVertexBuffer.push(-mapSize / 2 + i, heightMap[i][j], -mapSize / 2 + j, i / mapSize + Math.floor(j * 10000 / mapSize - 1));
+				var x = (heightMapValue(i + 1, j, heightMap, mapSize) - heightMapValue(i - 1, j, heightMap, mapSize)) * maxHeight;
+				var y = maxHeight * 2;
+				var z = (heightMapValue(i, j + 1, heightMap, mapSize) - heightMapValue(i, j - 1, heightMap, mapSize)) * maxHeight;
+				l = Math.sqrt(x * x + y * y + z * z);
+				terrainNormalBuffer.push(x / l, y / l, z / l);
+			}
+		}
+		var terrainIndexBuffer = [];
+		for (j = 0; j < mapSize - 1; j++)
+		{
+			for (i = 0; i < mapSize - 1; i++)
+			{
+				terrainIndexBuffer.push(i + j * mapSize, i + (j + 1) * mapSize + 1, i + j * mapSize + 1, i + j * mapSize, i + (j + 1) * (mapSize), i + (j + 1) * mapSize + 1);
+			}
+		}
+
+        // generate textures
+		var sand = generateTexture(256, [{o: 4, a: 1.5, r: 2, s: 2, c: [235, 221, 61, 5]}, {o: 3, a: 1.5, r: 6, s: 5, c: [255, 255, 255, 1]}], [252,237,70,255], 1);
+		var grass = generateTexture(256, [{o: 3, a: 2, r: 2, s: 2, c: [95,235,61, 0.7]}, {o: 5, a: 2, r: 2, s: 2, c: [200,-60,0, 10]}], [53,161,27,255], 1);
+		var rock = generateTexture(256, [{o: 5, a: 2, r: 2, s: 1, c: [128,128,128, 12]}, {o: 3, a: 2, r: 3, s: 5, c: [-40,-40,-40, 120]}], [116,89,46,255], 1);
+		var clouds = generateTexture(1024, [{o: 4, a: 1.3, r: 2, s: 3, c: [255, 0, 0, 6.5]}, {o: 4, a: 1.3, r: 2, s: 2, c: [0, 255, 0, 5]}, {o: 4, a: 2, r: 2, s: 2, c: [0, 0, 255, 15]}], [0,0,0,255], 0);
+		var water = generateTexture(1024, [{o: 4, a: 1.3, r: 2, s: 0, c: [150, 150, 0, 1]}, {o: 4, a: 2, r: 2, s: 0, c: [80, 80, 0, 1]}], [0,0,255,255], 1);
+		var bumpMap = derivativeTexture();
+
+        // terrain object
+		var terrainObject = createObject('a', 'b', terrainVertexBuffer, terrainIndexBuffer, terrainNormalBuffer, [sand, grass, rock, clouds, bumpMap]);
+
+		// sky object
+		var skyObject = createObject('e', 'f', [-1, -1, 0, 9999, 1, -1, 0, 9999.999, 1, 1, 0, 0.999, -1, 1, 0, 0], [0, 1, 2, 0, 2, 3], 0, [clouds]);
+
+		// water plane
+		var waterHeight = 1;
+		var waterObject = createObject('a', 'g', [-mapSize * 3 / 2, waterHeight, -mapSize * 3 / 2, 10000, mapSize * 3 / 2 - 1, waterHeight, -mapSize * 3 / 2, 10000.999, mapSize * 3 / 2 - 1, waterHeight, mapSize * 3 / 2 - 1, 0.999, -mapSize * 3 / 2, waterHeight, mapSize * 3 / 2 - 1, 0], [0, 2, 1, 0, 3, 2], 0, [water, heightMapTexture, previousFrameTexture, clouds], true);
+
+        // menu background
+        var menuBack = createObject('l', 'm', [-1, -1, 0, 9999, 1, -1, 0, 9999.999, 1, 1, 0, 0.999, -1, 1, 0, 0], [0, 1, 2, 0, 2, 3], 0, [clouds], 1);
+
+		// create the final composite object
+		composite = createObject('h', 'i', [-1, -1, 0, 0, 1, -1, 0, 0.999, 1, 1, 0, 10000.999, -1, 1, 0, 10000], [0, 1, 2, 0, 2, 3], 0, [mainFrameTexture]);
+
+		// set initial camera height
+		worldToCamera[13] = -(cameraPosition[1] = terrainHeight(cameraPosition[0], cameraPosition[2]));
+
+		// start the loop
+		drawLoop();
+	};
+})();
+</script>
